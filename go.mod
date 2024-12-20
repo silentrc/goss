@@ -1,4 +1,4 @@
-module github.com/eleven26/goss/v4
+module github.com/silentrc/goss
 
 go 1.23.4
 
