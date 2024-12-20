@@ -145,7 +145,9 @@ func (s *store) Size(ctx context.Context, key string) (int64, error) {
 	if err != nil {
 		return 0, err
 	}
-
+	if output.ContentLength == nil {
+		return 0, nil
+	}
 	return *output.ContentLength, nil
 }
 
@@ -250,9 +252,10 @@ func (s *store) Files(ctx context.Context, dir string) ([]File, error) {
 			files = append(files, &file{item})
 			count++
 		}
-
-		if !*output.IsTruncated {
-			break
+		if output.IsTruncated == nil {
+			if !*output.IsTruncated {
+				break
+			}
 		}
 
 		continuationToken = output.NextContinuationToken
