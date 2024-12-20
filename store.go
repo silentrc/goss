@@ -252,10 +252,8 @@ func (s *store) Files(ctx context.Context, dir string) ([]File, error) {
 			files = append(files, &file{item})
 			count++
 		}
-		if output.IsTruncated == nil {
-			if !*output.IsTruncated {
-				break
-			}
+		if output.IsTruncated != nil && !*output.IsTruncated {
+			break
 		}
 
 		continuationToken = output.NextContinuationToken
