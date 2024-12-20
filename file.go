@@ -39,7 +39,7 @@ func (f *file) Type() string {
 }
 
 func (f *file) Size() int64 {
-	return f.item.Size
+	return *f.item.Size
 }
 
 func (f *file) ETag() string {

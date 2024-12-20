@@ -146,7 +146,7 @@ func (s *store) Size(ctx context.Context, key string) (int64, error) {
 		return 0, err
 	}
 
-	return output.ContentLength, nil
+	return *output.ContentLength, nil
 }
 
 func (s *store) Exists(ctx context.Context, key string) (bool, error) {
@@ -234,7 +234,7 @@ func (s *store) Files(ctx context.Context, dir string) ([]File, error) {
 			Bucket:            aws.String(s.Bucket),
 			ContinuationToken: continuationToken,
 			Prefix:            aws.String(dir),
-			MaxKeys:           maxKeys,
+			MaxKeys:           &maxKeys,
 		}
 
 		output, err := s.s3.ListObjectsV2(ctx, input)
@@ -251,7 +251,7 @@ func (s *store) Files(ctx context.Context, dir string) ([]File, error) {
 			count++
 		}
 
-		if !output.IsTruncated {
+		if !*output.IsTruncated {
 			break
 		}
 
