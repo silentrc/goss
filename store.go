@@ -3,9 +3,11 @@ package goss
 import (
 	"bytes"
 	"context"
+	v4 "github.com/aws/aws-sdk-go-v2/aws/signer/v4"
 	"io"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	awsConfig "github.com/aws/aws-sdk-go-v2/config"
@@ -48,6 +50,9 @@ type Store interface {
 
 	// Size fet the file size.
 	Size(ctx context.Context, key string) (int64, error)
+
+	// Url fet the url
+	Url(ctx context.Context, key string, t time.Duration) (string, error)
 }
 
 func newStore(conf *Config) (Store, error) {
@@ -149,6 +154,24 @@ func (s *store) Size(ctx context.Context, key string) (int64, error) {
 		return 0, nil
 	}
 	return *output.ContentLength, nil
+}
+
+func (s *store) Url(ctx context.Context, key string, t time.Duration) (string, error) {
+	output, err := s.getUrl(ctx, key, t)
+	if err != nil {
+		return "", err
+	}
+
+	return output.URL, nil
+}
+
+func (s *store) getUrl(ctx context.Context, key string, t time.Duration) (*v4.PresignedHTTPRequest, error) {
+	input := &s3.GetObjectInput{
+		Bucket: aws.String(s.Bucket),
+		Key:    aws.String(key),
+	}
+
+	return s3.NewPresignClient(s.s3).PresignGetObject(ctx, input, s3.WithPresignExpires(t))
 }
 
 func (s *store) Exists(ctx context.Context, key string) (bool, error) {
