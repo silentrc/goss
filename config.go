@@ -12,6 +12,7 @@ type Config struct {
 	Bucket            string `yaml:"bucket"`
 	UseSsl            *bool  `yaml:"use_ssl"`
 	HostnameImmutable *bool  `yaml:"hostname_immutable"`
+	PathStyle         bool   `yaml:"path_style"`
 }
 
 func (c *Config) validate() error {

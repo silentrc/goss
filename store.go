@@ -74,7 +74,9 @@ func newStore(conf *Config) (Store, error) {
 		return nil, err
 	}
 
-	client := s3.NewFromConfig(cfg)
+	client := s3.NewFromConfig(cfg, func(options *s3.Options) {
+		options.UsePathStyle = conf.PathStyle
+	})
 
 	return &store{
 		s3:     client,
